@@ -1,3 +1,5 @@
+var notifID = null;
+var translated = null;
 /** 
  * The dumbest chrome extension ever. 
  */
@@ -9,15 +11,12 @@ function wikipediaLookup(searchTerm, lang) {
   fetch(searchUrl).then(function(response) {
       if (response.status != 200) {
         //err
-        console.log("lmao");
         renderNotif(false, searchTerm, null);
         return;
       }
-      response.json().then(function(translated) {
-        translated = translated["query"]["pages"];
-        console.log(translated);
+      response.json().then(function(arg) {
+        translated = arg["query"]["pages"];
         if (translated.hasOwnProperty(-1)) {
-        console.log("stuipd");
           //err
           renderNotif(false, searchTerm, null);
           return;
@@ -26,12 +25,10 @@ function wikipediaLookup(searchTerm, lang) {
         if (! ("langlinks" in translated)) {
           //the fuck do we do here.
           renderNotif(false, searchTerm, null);
-          console.log("no translation");
           return;
         } 
         translated = translated.langlinks[0]['*'];
         translated = strip(translated);
-        console.log(translated);
         renderNotif(true, searchTerm, translated);
       });
     }, function(errResponse) {
@@ -53,21 +50,25 @@ function strip(str) {
   return str;
 }
 
+
 function renderNotif(success, original, translated) {
-  console.log('HISDFLKJCKLVD');
   if (!success) {
     statusText = "Unable to translate";
-    notif = chrome.notifications.create(null, {"type": "basic", "message": original, "title": statusText, "iconUrl": "icon.png"}, null); 
+    notifID = chrome.notifications.create(null, {"type": "basic", "message": original, "title": statusText, "iconUrl": "icon.png"}, null); 
   } else {
-    console.log(translated);
-    notif = chrome.notifications.create(null, {"type": "basic", "message": translated, "iconUrl": "icon.png", "title": original}, null); 
+    var notifID = chrome.notifications.create(null,
+        {"type": "basic",
+         "message": translated,
+         "iconUrl": "icon.png",
+         "title": original,
+         "buttons": [{"title": "Copy to Clipboard"}]
+        },
+    null); 
   }
 }
 
 var trans = function (searchTerm, lang) {
-  console.log("this called");
   var lang = "zh";  
   wikipediaLookup(searchTerm, lang);
 }
-
 
