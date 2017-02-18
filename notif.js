@@ -2,7 +2,6 @@
  * The dumbest chrome extension ever. 
  */
 function wikipediaLookup(searchTerm, lang) {
-  console.log("FUFKCUFKJKC");
   var searchUrl = 'https://en.wikipedia.org/w/api.php' +
     '?action=query&titles=' + encodeURI(searchTerm) + 
     '&prop=langlinks&lllang=' + lang +
@@ -25,8 +24,9 @@ function wikipediaLookup(searchTerm, lang) {
         }
         translated = translated[Object.keys(translated)[0]]
         if (! ("langlinks" in translated)) {
-          console.log('FUCKFUCKFUCK');
           //the fuck do we do here.
+          renderNotif(false, searchTerm, null);
+          console.log("no translation");
           return;
         } 
         translated = translated.langlinks[0]['*'];
@@ -54,16 +54,14 @@ function strip(str) {
 }
 
 function renderNotif(success, original, translated) {
+  console.log('HISDFLKJCKLVD');
   if (!success) {
-    statusText = "Unable to translate".bold();
-    statusText += original;
-    
+    statusText = "Unable to translate";
+    notif = chrome.notifications.create(null, {"type": "basic", "message": original, "title": statusText, "iconUrl": "icon.png"}, null); 
   } else {
     console.log(translated);
-    statusText = translated;
+    notif = chrome.notifications.create(null, {"type": "basic", "message": translated, "iconUrl": "icon.png", "title": original}, null); 
   }
-//  document.getElementById('status').textContent = statusText;
- // document.getElementById("status").style.display="unset";
 }
 
 var trans = function (searchTerm, lang) {
