@@ -1,16 +1,15 @@
 {
-  "manifest_version": 1,
-
+  "manifest_version": 2,
   "name": "Example",
   "description":" Better Translate",
-  "version": "1.0",
-
-  "browser_action": {
-    "default_icon": "icon.png",
-    "default_popup": "popup.html"
-  },
+  "version": "0.2",
   "permissions": [
-    "http*://*wikipedia.org/",
-    "notifications"
-  ]
+    "http://*.wikipedia.org/*",
+    "https://*.wikipedia.org/*",
+    "notifications",
+    "contextMenus"
+  ],
+  "background": {
+    "scripts": ["notif.js", "rightclick.js"]
+  }
 }

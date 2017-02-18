@@ -1,7 +1,8 @@
 /** 
- * Does a thing. 
+ * The dumbest chrome extension ever. 
  */
 function wikipediaLookup(searchTerm, lang) {
+  console.log("FUFKCUFKJKC");
   var searchUrl = 'https://en.wikipedia.org/w/api.php' +
     '?action=query&titles=' + encodeURI(searchTerm) + 
     '&prop=langlinks&lllang=' + lang +
@@ -9,17 +10,26 @@ function wikipediaLookup(searchTerm, lang) {
   fetch(searchUrl).then(function(response) {
       if (response.status != 200) {
         //err
+        console.log("lmao");
         renderNotif(false, searchTerm, null);
         return;
       }
       response.json().then(function(translated) {
         translated = translated["query"]["pages"];
+        console.log(translated);
         if (translated.hasOwnProperty(-1)) {
+        console.log("stuipd");
           //err
           renderNotif(false, searchTerm, null);
           return;
         }
-        translated = translated[Object.keys(translated)[0]].langlinks[0]['*'];
+        translated = translated[Object.keys(translated)[0]]
+        if (! ("langlinks" in translated)) {
+          console.log('FUCKFUCKFUCK');
+          //the fuck do we do here.
+          return;
+        } 
+        translated = translated.langlinks[0]['*'];
         translated = strip(translated);
         console.log(translated);
         renderNotif(true, searchTerm, translated);
@@ -38,7 +48,6 @@ function strip(str) {
   if (right > -1) {
     var left = str.indexOf("(");
     console.assert(right > left && left > -1, "problem with parantheses");
-    console.log("aylmao");
     return str.substring(0,left) + strip(str.substring(right + 1));
   }
   return str;
@@ -53,15 +62,14 @@ function renderNotif(success, original, translated) {
     console.log(translated);
     statusText = translated;
   }
-  document.getElementById('status').textContent = statusText;
-//  document.getElementById("status").style.display="unset";
+//  document.getElementById('status').textContent = statusText;
+ // document.getElementById("status").style.display="unset";
 }
 
-function onload() {
-  var searchTerm = "Albert Einstein";
+var trans = function (searchTerm, lang) {
+  console.log("this called");
   var lang = "zh";  
   wikipediaLookup(searchTerm, lang);
 }
 
-document.addEventListener('DOMContentLoaded', onload);
 
